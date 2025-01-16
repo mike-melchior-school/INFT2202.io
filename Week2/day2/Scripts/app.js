@@ -12,14 +12,23 @@
 
         let mainContent = document.getElementsByTagName('main')[0];
         let mainParagraph = document.createElement("p");
-
         mainParagraph.setAttribute("id", "mainParagraph");
         mainParagraph.setAttribute("class", "mt-3");
         mainParagraph.textContent = "This is my first main paragraph";
-
         mainContent.appendChild(mainParagraph);
 
+        let firstString = "This is";
+        let secondString = `${firstString} my second string.`;
+        mainParagraph.textContent = secondString;
+        mainContent.appendChild(mainParagraph);
 
+        let documentBody = document.body;
+        let article = document.createElement("article");
+        let articleParagraph = `<p id="articleParagraph" class="mt-3">This is my first article paragraph</p>`;
+        article.setAttribute("class", "container");
+        article.innerHTML = articleParagraph;
+
+        documentBody.appendChild(article);
     }
 
     const displayProductsPage = () => {
