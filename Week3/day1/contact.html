@@ -39,9 +39,49 @@
     </nav>
 </header>
 
-<h1>Contact Us</h1>
+<main class="container">
+    <h1>Contact Us</h1>
+
+    <form class="col-lg-6 col-md-10 col-sm-12 mb-4">
+        <div class="input-group-text mb-3">
+            <span class="input-group-text">Full Name</span>
+            <input id="fullName" name="fullName" type="text" class="form-control"
+                   aria-describedby="Full Name" aria-label="Full Name" required>
+        </div>
+        <div class="input-group-text mb-3">
+            <span class="input-group-text">Contact Number</span>
+            <input id="contactNumber" name="contactNumber" type="tel" class="form-control"
+                   aria-describedby="Contact Number" aria-label="Contact Number" required>
+        </div>
+        <div class="input-group-text mb-3">
+            <span class="input-group-text">Email</span>
+            <input id="email" name="email" type="email" class="form-control"
+                   aria-describedby="Email" aria-label="Email" required>
+        </div>
+        <div class="input-group-text mb-3">
+            <span class="input-group-text">Message</span>
+            <textarea id="message" name="message" type="text" class="form-control"
+                      aria-describedby="Message" aria-label="Message"></textarea>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input id="subscribeCheckbox" type="checkbox" class="form-check-input" >
+            <label class="form-check-label" for="subscribeCheckbox">Subscribe to out Contact List</label>
+        </div>
+
+
+        <button id="sendButton" name="sendButton" type="submit" class="btn btn-primary"><i class="fa-solid fa-envelope"></i> Submit</button>
+        <button id="cancelButton" name="cancelButton" type="reset" class="btn btn-warning"><i class="fa-solid fa-rotate-left"></i> Cancel</button>
+    </form>
+
+    <div class="col-lg-6 col-md-4">
+        <a href="contact-list.html" class="btn btn-outline-primary"><i class="fa-solid fa-users"></i> Show Contact List</a>
+    </div>
+
+</main>
 
 <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="Scripts/contact.js"></script>
 <script src="Scripts/app.js" defer></script>
 </body>
 </html>
