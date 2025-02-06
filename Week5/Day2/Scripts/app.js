@@ -1,15 +1,193 @@
 'use strict';
 
-
 // IIFE
 (function() {
 
+
+
+    /**
+     * redirect the user back to the contact list page
+     * @returns {string}
+     */
+    const handleCancelClick = () => location.href = "contact-list.html";
+
+    /**
+     * handles the process of editing an existing contact
+     * @param event
+     * @param contact contact to update
+     * @param page unique contact identifier
+     */
+    const handleEditClick = (event, contact, page) => {
+        // prevent default form submission
+        event.preventDefault();
+
+        if (!validateForm()) {
+            alert("Invalid data! Please check your input")
+            return;
+        }
+
+        const fullName = document.getElementById('fullName').value;
+        const contactNumber = document.getElementById('contactNumber').value;
+        const emailAddress = document.getElementById('emailAddress').value;
+
+        // update the contact object with the new values
+        contact.fullName = fullName;
+        contact.emailAddress = emailAddress;
+        contact.contactNumber = contactNumber;
+
+
+        localStorage.setItem(page, contact.serialize()); // save the updated contact in local storage
+        location.href = "contact-list.html";
+
+    }
+
+    /**
+     * handles the process of adding a new contact
+     * @param event the event object to prevent default form submission
+     */
+    const handleAddClick = (event) => {
+        // prevent the default form submission
+        event.preventDefault();
+
+        if (!validateForm()) {
+            alert("Form contains errors, please correct the before submitting")
+            return;
+        }
+
+        const fullName = document.getElementById('fullName').value;
+        const contactNumber = document.getElementById('contactNumber').value;
+        const emailAddress = document.getElementById('emailAddress').value;
+
+        AddContact(fullName, emailAddress, contactNumber);
+
+        //redirection
+        location.href = "contact-list.html";
+    }
+
+    /**
+     *  Validate the entire frm by checking the validity of each input
+     * @returns {boolean}
+     */
+    const validateForm = () => {
+        return(
+            validateInput("fullName")
+            && validateInput("contactNumber")
+            && validateInput("emailAddress")
+        )
+    }
+
+    /**
+     * attaches validation event listeners to form input fields dynamically
+     * @param elementID
+     * @param event
+     * @param handler
+     */
+    const addEventListenerOnce = (elementID, event, handler) => {
+
+        const element = document.getElementById(elementID);
+        if (element) {
+            // remove any existing event listeners
+            element.removeEventListener(event, handler);
+
+            // attach the new (latest) event for that element
+            element.addEventListener(event, handler);
+        } else {
+            console.warn(`[WARN] Element with ID "${elementID}" not found.`);
+        }
+    }
+
+    const attachValidationListeners = () => {
+        console.log("[INFO] Attaching validation listeners...");
+
+        Object.keys(VALIDATION_RULES).forEach(fieldID => {
+            const field = document.getElementById(fieldID)
+            if (!field) {
+                console.warn(`[WARN] Field "${fieldID}" not found. Skipping listener`);
+                return;
+            }
+
+            // Attach event listener using a centralized validation method
+            addEventListenerOnce(fieldID, "input", () => validateInput(fieldID));
+        })
+
+    }
+
+    /**
+     * Validation on input based on a predefined validation rule
+     * @param fieldID
+     * @returns {boolean}
+     */
+    const validateInput = (fieldID) => {
+
+        const field = document.getElementById(fieldID);
+        const errorElement = document.getElementById(`${fieldID}-error`);
+        const rule = VALIDATION_RULES[fieldID];
+
+        if (!field || !errorElement || !rule) {
+            console.warn(`[WARN] Validation rules not found for: ${fieldID}`);
+            return false;
+        }
+
+        // check if the input is empty
+        if (field.value.trim() === "") {
+            errorElement.textContent = "This field is required";
+            errorElement.style.display = "block";
+            return false;
+        }
+
+        // check field against regex
+        if (!rule.regex.test(field.value)) {
+            errorElement.textContent = rule.errorMessage;
+            errorElement.style.display = "block";
+            return false;
+        }
+
+        errorElement.textContent = "";
+        errorElement.style.display = "none";
+
+        return true;
+
+    }
+
+    /**
+     * Centralized validation rules for input fields
+     * @type {{fullName: {regex: RegExp, errorMessage: string}, contactNumber: {regex: RegExp, errorMessage: string},
+     * emailAddress: {regex: RegExp, errorMessage: string}}}
+     */
+    const VALIDATION_RULES = {
+        fullName: {
+            regex: /^[A-Za-z\s]+$/, // Allows for only letters and spaces
+            errorMessage: "Full Name must contain only letters and spaces"
+        },
+        contactNumber: {
+            regex: /^\d{3}-\d{3}-\d{4}$/,
+            errorMessage: "Contact Number must be in format ###-###-####"
+        },
+        emailAddress: {
+            regex: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            errorMessage: "Invalid email address format"
+        },
+    }
+
     const AddContact = (fullName, contactNumber, emailAddress) => {
+        console.log("[DEBUG] AddContact() triggered.");
+
+        if (!validateForm()) {
+            alert("Form contains errors, please correct them before submitting")
+            return;
+        }
+
         let contact = new core.Contact(fullName, contactNumber, emailAddress);
         if (contact.serialize()) {
             let key = `contact_${Date.now()}`;
             localStorage.setItem(key, contact.serialize());
+            console.log(`[INFO] Contact added: ${key}`)
+        } else {
+            console.error(`[ERROR] Contact serialization failed`);
         }
+
+        // redirection
+        location.href = "contact-list.html";
     }
 
     const displayWeather = async () => {
@@ -73,7 +251,12 @@
 
         sendButton.addEventListener("click", () => {
             if (subscribeCheckbox.checked) {
-                AddContact(fullName.value, contactNumber.value, email.value);
+                AddContact(
+                    document.getElementById("fullName").value,
+                    document.getElementById("contactNumber").value,
+                    document.getElementById("emailAddress").value
+                );
+                alert("Form successfully submitted, contact has been added.");
             }
         })
     }
@@ -168,28 +351,19 @@
 
         switch (page) {
             case "add":
-                // add new contact
-                const heading = document.querySelector('main>h1');
 
                 document.title = "Add Contact";
+                document.querySelector('main>h1').textContent = "Add Contact";
 
-                if (heading) heading.textContent = "Add Contact";
-                if (editButton) editButton.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Contact`;
-                editButton.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    AddContact(
-                        document.getElementById("fullName").value,
-                        document.getElementById("contactNumber").value,
-                        document.getElementById("email").value,
-                    )
-                    location.href = "contact-list.html";
-                })
-
-                if (cancelButton) {
-                    cancelButton.addEventListener("click", (e) => {
-                        location.href = "contact-list.html";
-                    })
+                if (editButton) {
+                    editButton.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Contact`;
+                    editButton.classList.remove("btn-primary");
+                    editButton.classList.add("btn-success");
                 }
+
+                addEventListenerOnce('editButton', 'click', handleAddClick);
+                addEventListenerOnce('cancelButton', 'click', handleCancelClick);
+
                 break;
             default:
                 // edit an existing contact
@@ -201,27 +375,19 @@
                 // Prepopulate contact data into form
                 document.getElementById("fullName").value = contact.fullName;
                 document.getElementById("contactNumber").value = contact.contactNumber;
-                document.getElementById("email").value = contact.emailAddress;
+                document.getElementById("emailAddress").value = contact.emailAddress;
 
 
                 if (editButton) {
-                    editButton.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        contact.fullName = document.getElementById("fullName").value;
-                        contact.contactNumber = document.getElementById("contactNumber").value;
-                        contact.emailAddress = document.getElementById("email").value;
-
-                        // update/overwrite
-                        localStorage.setItem(page, contact.serialize());
-                        location.href = "contact-list.html";
-                    })
+                    editButton.innerHTML = `<i class="fa fa-edit fa-lg"></i> Edit Contact`;
+                    editButton.classList.remove("btn-success");
+                    editButton.classList.add("btn-primary");
                 }
 
-                if (cancelButton) {
-                    cancelButton.addEventListener("click", (e) => {
-                        location.href = "contact-list.html";
-                    })
-                }
+                // attach event listeners
+                addEventListenerOnce('editButton', 'click',
+                    (event) => handleEditClick(event, contact, page));
+                addEventListenerOnce('cancelButton', 'click', handleCancelClick())
 
                 break;
         }
@@ -241,6 +407,7 @@
                 displayServicesPage();
                 break;
             case "Contact Us":
+                attachValidationListeners();
                 displayContactPage();
                 break;
             case "About":
@@ -250,6 +417,7 @@
                 displayContactsListPage();
                 break;
             case "Edit Contact":
+                attachValidationListeners();
                 displayEditContactPage();
                 break;
             default:

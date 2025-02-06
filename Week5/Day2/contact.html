@@ -44,19 +44,24 @@
 
     <form class="col-lg-6 col-md-10 col-sm-12 mb-4">
         <div class="input-group-text mb-3">
-            <span class="input-group-text">Full Name</span>
+            <label for="fullName" class="input-group-text">Full Name</label>
             <input id="fullName" name="fullName" type="text" class="form-control"
-                   aria-describedby="Full Name" aria-label="Full Name" required>
+                   aria-describedby="fullName-error" required>
+            <span id="fullName-error" class="text-danger"></span>
         </div>
         <div class="input-group-text mb-3">
-            <span class="input-group-text">Contact Number</span>
+            <label for="contactNumber" class="input-group-text">Contact Number</label>
             <input id="contactNumber" name="contactNumber" type="tel" class="form-control"
-                   aria-describedby="Contact Number" aria-label="Contact Number" required>
+                   aria-describedby="contactNumber-error" required>
+            <span id="contactNumber-error" class="text-danger"></span>
+
         </div>
         <div class="input-group-text mb-3">
-            <span class="input-group-text">Email</span>
-            <input id="email" name="email" type="email" class="form-control"
-                   aria-describedby="Email" aria-label="Email" required>
+            <label for="emailAddress" class="input-group-text">Email</label>
+            <input id="emailAddress" name="emailAddress" type="email" class="form-control"
+                   aria-describedby="email-error" required>
+            <span id="email-error" class="text-danger"></span>
+
         </div>
         <div class="input-group-text mb-3">
             <span class="input-group-text">Message</span>
