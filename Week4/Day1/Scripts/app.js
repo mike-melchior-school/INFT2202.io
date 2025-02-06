@@ -95,8 +95,16 @@
                                     <td>${contact.fullName}</td>
                                     <td>${contact.contactNumber}</td>
                                     <td>${contact.emailAddress}</td>
-                                    <td></td>
-                                    <td></td>
+                                    <td class="text-center">
+                                        <button class="btn btn-warning btn-sm edit">
+                                            <i class="fa-solid fa-user-pen"></i> Edit
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm delete">
+                                            <i class="fa-solid fa-trash"></i> Delete
+                                        </button>
+                                    </td>
                                  </tr>`;
 
                         index++;
