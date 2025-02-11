@@ -3,6 +3,25 @@
 // IIFE
 (function() {
 
+    const updateActiveNavLink = () => {
+        console.log("[INFO] updateActiveNacLink called");
+        const currentPage = document.title.trim();
+        const navLinks = document.querySelectorAll('nav a');
+
+        navLinks.forEach((link) => {
+            if (link.textContent.trim() === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        })
+
+    }
+
+    /**
+     * loads the header from an external local file
+     * @returns {Promise<void>}
+     */
     const loadHeader = async () => {
         console.log('[INFO] loadHeader Called')
 
@@ -10,6 +29,8 @@
             const response = await fetch('header.html');
             const data = await response.text();
             document.querySelector('header').innerHTML = data;
+
+            updateActiveNavLink()
 
         } catch (e) {
             console.error("[ERROR] Unable to load header");
