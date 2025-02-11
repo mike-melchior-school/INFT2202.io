@@ -3,7 +3,18 @@
 // IIFE
 (function() {
 
+    const loadHeader = async () => {
+        console.log('[INFO] loadHeader Called')
 
+        try {
+            const response = await fetch('header.html');
+            const data = await response.text();
+            document.querySelector('header').innerHTML = data;
+
+        } catch (e) {
+            console.error("[ERROR] Unable to load header");
+        }
+    }
 
     /**
      * redirect the user back to the contact list page
@@ -394,8 +405,18 @@
         }
     }
 
-    const Start = () => {
+    const displayLoginPage = () => {
+        console.log("[INFO] displaying login page");
+    }
+
+    const displayRegisterPage = () => {
+        console.log("[INFO] displaying register page");
+    }
+
+    const Start = async () => {
         console.log('Starting app...');
+
+        await loadHeader();
 
         switch (document.title) {
             case "Home":
@@ -417,10 +438,17 @@
             case "Contact List":
                 displayContactsListPage();
                 break;
+            case "Login":
+                displayLoginPage();
+                break;
+            case "Register":
+                displayRegisterPage();
+                break;
             case "Edit Contact":
                 attachValidationListeners();
                 displayEditContactPage();
                 break;
+
             default:
                 console.error("No matching case for page title")
                 break;
