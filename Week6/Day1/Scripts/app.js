@@ -124,6 +124,7 @@
         const rule = VALIDATION_RULES[fieldID];
 
         if (!field || !errorElement || !rule) {
+            console.log(field, errorElement, fieldID);
             console.warn(`[WARN] Validation rules not found for: ${fieldID}`);
             return false;
         }

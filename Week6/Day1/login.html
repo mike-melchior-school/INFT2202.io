@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Edit Contact</title>
+    <title>Login</title>
     <link rel="stylesheet" href="Content/app.css">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.css">
@@ -39,34 +39,49 @@
     </nav>
 </header>
 
-<main class="container">
-    <h1>Edit Contact</h1>
+<!-- Main Content -->
+<main class="container" id="mainContent">
+    <div class="row">
+        <div class="offset-md-3 col-md-6 col-sm-12">
+            <div class="login" id="contentArea">
+                <h1 class="display-4">Login</h1>
+                <form id="loginForm" novalidate>
 
-    <form class="col-lg-6 col-md-10 col-sm-12 mb-4">
-        <div class="input-group-text mb-3">
-            <label for="fullName" class="input-group-text">Full Name</label>
-            <input id="fullName" name="fullName" type="text" class="form-control"
-                   aria-describedby="fullName-error" required>
-            <span id="fullName-error" class="text-danger"></span>
+                    <div class="form-group">
+                        <div class="input-group">
+                          <span class="input-group-addon">
+                            <i class="fa fa-user">
+                            </i>
+                          </span>
+                            <input type="text" class="form-control" id="contactName" name="userName"  required
+                                   value="" placeholder="Enter your username">
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-group">
+                          <span class="input-group-addon">
+                            <i class="fa fa-lock">
+                            </i>
+                          </span>
+                            <input type="password" class="form-control" id="password" name="password"  required
+                                   value="" placeholder="Enter your password">
+                        </div>
+
+                    </div>
+                    <div class="text-right">
+                        <button id="submitButton" type="submit" class="btn btn-primary btn-lg">Login</button>
+                    </div>
+                </form>
+
+            </div>
+            <p class="text-center text-muted small">
+                Don't have an account?
+                <a href="register.html">Register Here!</a>
+            </p>
         </div>
-        <div class="input-group-text mb-3">
-            <label for="contactNumber" class="input-group-text">Contact Number</label>
-            <input id="contactNumber" name="contactNumber" type="tel" class="form-control"
-                   aria-describedby="contactNumber-error" required>
-            <span id="contactNumber-error" class="text-danger"></span>
-
-        </div>
-        <div class="input-group-text mb-3">
-            <label for="emailAddress" class="input-group-text">Email</label>
-            <input id="emailAddress" name="emailAddress" type="email" class="form-control"
-                   aria-describedby="emailAddress-error" required>
-            <span id="email-error" class="text-danger"></span>
-        </div>
-
-        <button id="editButton" name="editButton" type="submit" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
-        <button id="cancelButton" name="cancelButton" type="reset" class="btn btn-warning"><i class="fa-solid fa-rotate-left"></i> Cancel</button>
-    </form>
-
+    </div>
 </main>
 
 <script src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
