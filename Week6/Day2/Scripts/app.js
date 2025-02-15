@@ -30,7 +30,7 @@
     }
 
     const updateActiveNavLink = () => {
-        console.log("[INFO] updateActiveNacLink called");
+        console.log("[INFO] updateActiveNavLink called");
         const currentPage = document.title.trim();
         const navLinks = document.querySelectorAll('nav a');
 
@@ -181,7 +181,7 @@
         const rule = VALIDATION_RULES[fieldID];
 
         if (!field || !errorElement || !rule) {
-            console.log(field, errorElement, fieldID);
+            console.log(`input: ${field}, error element: ${errorElement}, input id: ${fieldID}`);
             console.warn(`[WARN] Validation rules not found for: ${fieldID}`);
             return false;
         }
@@ -370,9 +370,17 @@
         })
 
         const editButtons = document.querySelectorAll('button.edit');
+        // editButtons.forEach((button) => {
+        //     button.addEventListener("click", function() {
+        //         // location.href = "edit.html#" + this.value;
+        //         // location.href = "edit.html";
+        //         console.log(this.value)
+        //     })
+        // })
+
         editButtons.forEach((button) => {
-            button.addEventListener("click", function() {
-                location.href = "edit.html#" + this.value;
+            button.addEventListener("click", (e) => {
+               location.href = "edit.html#" + e.target.value;
             })
         })
 
@@ -445,7 +453,22 @@
                 // attach event listeners
                 addEventListenerOnce('editButton', 'click',
                     (event) => handleEditClick(event, contact, page));
-                addEventListenerOnce('cancelButton', 'click', handleCancelClick())
+                // cancelButton.removeEventListener("click", handleCancelClick);
+                // cancelButton.addEventListener("click", handleCancelClick);
+
+
+                // addEventListenerOnce('cancelButton', 'click', handleCancelClick())
+
+                const element = document.getElementById("cancelButton");
+                if (element) {
+                    // remove any existing event listeners
+                    element.removeEventListener('click', handleCancelClick);
+
+                    // attach the new (latest) event for that element
+                    element.addEventListener('click', handleCancelClick);
+                } else {
+                    console.warn(`[WARN] Element with ID "cancelButton" not found.`);
+                }
 
                 break;
         }
@@ -457,6 +480,12 @@
         const messageArea = document.getElementById('messageArea');
         const loginButton = document.getElementById('loginButton');
         const cancelButton = document.getElementById('cancelButton');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // if error is showing, remove it if the user changes the input in the username or password field
+        usernameInput.addEventListener('input', e => messageArea.style.display = 'none');
+        passwordInput.addEventListener('input', e => messageArea.style.display = 'none');
 
         messageArea.style.display = "none";
 
