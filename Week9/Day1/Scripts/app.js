@@ -1,7 +1,39 @@
 'use strict';
 
 // IIFE
+import {loadHeader, updateActiveNavLink} from "./header";
+import {Router} from "./router";
+
+
+const routes = {
+    "/": "views/pages/home.html",
+    // "home": "views/pages/home.html",
+    "/about": "views/pages/about.html",
+    "/contact": "views/pages/contact.html",
+    "/products": "views/pages/products.html",
+    "/services": "views/pages/services.html",
+    "/contact-list": "views/pages/contact-list.html",
+    "/edit": "views/pages/edit.html",
+    "/login": "views/pages/login.html",
+    "/404": "views/pages/404.html",
+    "/register": "views/pages/register.html",
+}
+
+const router = new Router(routes);
+
 (function() {
+
+    const handleLogout = (e) => {
+        e.preventDefault();
+        sessionStorage.removeItem("user");
+        console.log(`[INFO] User logged out, Update UI...`)
+
+        loadHeader().then(() => {
+            checkLogin();
+            router.navigate("/");
+        })
+
+    }
 
     const checkLogin = () => {
         console.log("[INFO] checking user login status");
@@ -18,47 +50,13 @@
         if (userSession) {
             loginNav.innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout`
             loginNav.href = "#";
-            loginNav.addEventListener("click", (e) => {
-                e.preventDefault();
-                sessionStorage.removeItem("user");
-                location.href = "login.html";
-            })
+            loginNav.removeEventListener("click", handleLogout);
+            loginNav.addEventListener("click", handleLogout);
+        } else {
+            loginNav.innerHTML = `<i class="fas fa-sign-in-alt"></i> Login`
+            loginNav.removeEventListener("click", handleLogout);
+            loginNav.addEventListener("click", () => router.navigate("/login"));
         }
-
-
-
-    }
-
-    const updateActiveNavLink = () => {
-        console.log("[INFO] updateActiveNavLink called");
-        const currentPage = document.title.trim();
-        const navLinks = document.querySelectorAll('nav a');
-
-        navLinks.forEach((link) => {
-            if (link.textContent.trim() === currentPage) {
-                link.classList.add('active');
-            } else {
-                link.classList.remove('active');
-            }
-        })
-
-    }
-
-    /**
-     * loads the header from an external local file
-     * @returns {Promise<void>}
-     */
-    const loadHeader = async () => {
-        console.log('[INFO] loadHeader Called')
-
-        return fetch('header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.querySelector('header').innerHTML = data;
-                updateActiveNavLink();
-            })
-            .catch(error => console.log("[ERROR] Unable to load header"));
-
 
     }
 
@@ -535,7 +533,12 @@
 
                     messageArea.style.display = "none";
                     messageArea.classList.remove("alert", "alert-danger");
-                    location.href = "contact-list.html";
+
+                    loadHeader().then(() => {
+                        checkLogin();
+                        router.navigate("/contact-list");
+                    })
+
                 } else {
                     messageArea.style.display = "block";
                     messageArea.classList.add("alert", "alert-danger");
@@ -552,9 +555,9 @@
             }
         });
 
-        cancelButton.addEventListener("click", async() => {
+        cancelButton.addEventListener("click", () => {
             document.getElementById("loginForm").reset();
-            location.href = "index.html";
+            router.navigate("/");
         });
 
 
