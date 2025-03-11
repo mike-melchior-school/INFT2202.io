@@ -9,8 +9,17 @@ export class Router {
     }
 
     init() {
-        console.log(`[INFO] Navigating to: ${location.hash.slice(1)}`)
-        this.loadRoute(location.hash.slice(1));
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const path = location.hash.slice(1) || "/";
+            console.log(`[INFO] initial page load: ${path}`);
+            this.loadRoute(path);
+        })
+
+        window.addEventListener("popstate", () => {
+            console.log(`[INFO] Navigating to: ${location.hash.slice(1)}`)
+            this.loadRoute(location.hash.slice(1));
+        })
     }
 
     navigate(path) {

@@ -1,13 +1,15 @@
 'use strict';
 
 // IIFE
-import {loadHeader, updateActiveNavLink} from "./header.js";
+import {loadHeader} from "./header.js";
 import {Router} from "./router.js";
+import {loadFooter} from "./footer.js";
+import {authGuard} from "./authguard.js";
 
 
 const routes = {
     "/": "views/pages/home.html",
-    // "home": "views/pages/home.html",
+    "home": "views/pages/home.html",
     "/about": "views/pages/about.html",
     "/contact": "views/pages/contact.html",
     "/products": "views/pages/products.html",
@@ -17,48 +19,26 @@ const routes = {
     "/login": "views/pages/login.html",
     "/404": "views/pages/404.html",
     "/register": "views/pages/register.html",
-}
+};
+
+const pageTitles = {
+    "/": "Home",
+    "home": "Home",
+    "/about": "About Us",
+    "/contact": "Contact Us",
+    "/products": "Products",
+    "/services": "Services",
+    "/contact-list": "Contact List",
+    "/edit": "Edit Contact",
+    "/login": "Login",
+    "/404": "Page Not Found",
+    "/register": "Register",
+};
 
 const router = new Router(routes);
 
 (function() {
 
-    const handleLogout = (e) => {
-        e.preventDefault();
-        sessionStorage.removeItem("user");
-        console.log(`[INFO] User logged out, Update UI...`)
-
-        loadHeader().then(() => {
-            checkLogin();
-            router.navigate("/");
-        })
-
-    }
-
-    const checkLogin = () => {
-        console.log("[INFO] checking user login status");
-
-        const loginNav = document.getElementById("login");
-
-        if (!loginNav) {
-            console.warn("[WARN] login nav link element not found in the dom, skipping checkLogin().")
-            return;
-        }
-
-        const userSession = sessionStorage.getItem("user");
-
-        if (userSession) {
-            loginNav.innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout`
-            loginNav.href = "#";
-            loginNav.removeEventListener("click", handleLogout);
-            loginNav.addEventListener("click", handleLogout);
-        } else {
-            loginNav.innerHTML = `<i class="fas fa-sign-in-alt"></i> Login`
-            loginNav.removeEventListener("click", handleLogout);
-            loginNav.addEventListener("click", () => router.navigate("/login"));
-        }
-
-    }
 
     /**
      * redirect the user back to the contact list page
@@ -300,7 +280,7 @@ const router = new Router(routes);
                  
                   <div id="weather" class="mb-5">
                      <h3>Weather Information</h3>
-                     <p id="Weather-data">Fetching Weather Data</p>
+                     <p id="weatherData">Fetching Weather Data</p>
                   </div>
                   
                   <p id="MainParagraph" class="mt-5"> This is my main paragraph</p>
@@ -421,6 +401,15 @@ const router = new Router(routes);
         const deleteButtons = document.querySelectorAll('button.delete');
         deleteButtons.forEach(button => {
             button.addEventListener("click", function()  {
+
+                const contactKey = this.value;
+                console.log(`[DEBUG] Deleting contact with Contact ID: ${contactKey}`);
+
+                if (!contactKey.startsWith("contact_")) {
+                    console.error("[ERROR] Invalid contact key format");
+                    return;
+                }
+
                 if (confirm("Delete contact?")) {
                     localStorage.removeItem(this.value);
                     displayContactsListPage();
@@ -510,6 +499,11 @@ const router = new Router(routes);
     const displayLoginPage = () => {
         console.log("[INFO] displaying login page");
 
+        if (sessionStorage.getItem("user")) {
+            router.navigate("/contact-list");
+            return;
+        }
+
         const messageArea = document.getElementById('messageArea');
         const loginButton = document.getElementById('loginButton');
         const cancelButton = document.getElementById('cancelButton');
@@ -570,7 +564,6 @@ const router = new Router(routes);
                     messageArea.classList.remove("alert", "alert-danger");
 
                     loadHeader().then(() => {
-                        checkLogin();
                         router.navigate("/contact-list");
                     })
 
@@ -603,6 +596,17 @@ const router = new Router(routes);
     }
 
     const handlePageLogic = (path) => {
+        document.title = pageTitles[path] || "Untitled Page";
+
+        const protectedRoutes = [
+            "/contact-list",
+            "/edit",
+        ];
+
+        if (protectedRoutes.includes(path)) {
+            authGuard();
+        }
+
         switch (path) {
             case "/":
             case "home":
@@ -642,11 +646,13 @@ const router = new Router(routes);
     const Start = async () => {
         console.log('Starting app...');
         await loadHeader();
-        checkLogin();
-        updateActiveNavLink();
+        await loadFooter();
+        authGuard();
 
         const currentPath = location.hash.slice(1) || "/"
         router.navigate(currentPath);
+
+        handlePageLogic(currentPath);
     }
 
     document.addEventListener("routeLoaded", (e) => {
@@ -654,10 +660,14 @@ const router = new Router(routes);
         console.log(`New route loaded: ${newPath}`);
 
         loadHeader().then(() => {
-            checkLogin();
             handlePageLogic(newPath);
         })
     });
+
+    window.addEventListener('sessionExpired', () => {
+        console.warn(`[SESSION] Redirecting the user due to inactivity`);
+        router.navigate("/login");
+    })
 
     window.addEventListener('DOMContentLoaded', () => {
         console.log("DOM Fully loaded and parsed")
