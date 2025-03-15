@@ -93,7 +93,7 @@ const router = new Router(routes);
         const contactNumber = document.getElementById('contactNumber').value;
         const emailAddress = document.getElementById('emailAddress').value;
 
-        AddContact(fullName, emailAddress, contactNumber);
+        AddContact(fullName, contactNumber, emailAddress);
 
         //redirection
         router.navigate("/contact-list");
@@ -223,7 +223,7 @@ const router = new Router(routes);
         }
 
         // redirection
-        router.navigate("contact-list");
+        router.navigate("/contact-list");
     }
 
     const displayWeather = async () => {
@@ -388,7 +388,6 @@ const router = new Router(routes);
         editButtons.forEach((button) => {
             button.addEventListener("click", function() {
                 router.navigate(`/edit/${this.value}`)
-                console.log(this.value)
             })
         })
 
@@ -440,7 +439,7 @@ const router = new Router(routes);
         const cancelButton = document.getElementById("cancelButton");
 
         switch (page) {
-            case "add":
+            case "/edit#add":
                 document.title = "Add Contact";
                 document.querySelector('main>h1').textContent = "Add Contact";
 
@@ -478,7 +477,7 @@ const router = new Router(routes);
 
                 // attach event listeners
                 addEventListenerOnce('editButton', 'click',
-                    (event) => handleEditClick(event, contact, page));
+                    (event) => handleEditClick(event, contact, contactID));
 
                 if (cancelButton) {
                     // remove any existing event listeners

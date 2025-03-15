@@ -92,7 +92,7 @@ const router = new Router(routes);
         const contactNumber = document.getElementById('contactNumber').value;
         const emailAddress = document.getElementById('emailAddress').value;
 
-        AddContact(fullName, emailAddress, contactNumber);
+        AddContact(fullName, contactNumber, emailAddress);
 
         //redirection
         router.navigate("/contact-list");
@@ -222,7 +222,7 @@ const router = new Router(routes);
         }
 
         // redirection
-        router.navigate("contact-list");
+        router.navigate("/contact-list");
     }
 
     const displayWeather = async () => {
@@ -478,7 +478,7 @@ const router = new Router(routes);
 
                 // attach event listeners
                 addEventListenerOnce('editButton', 'click',
-                    (event) => handleEditClick(event, contact, page));
+                    (event) => handleEditClick(event, contact, contactID));
 
                 // addEventListenerOnce('cancelButton', 'click', handleCancelClick())
 

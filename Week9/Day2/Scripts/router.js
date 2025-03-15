@@ -38,8 +38,6 @@ export class Router {
             basePath = "/edit";
         }
 
-        console.log(basePath, ": base path");
-
         if (!this.routes[basePath]) {
             console.error(`[WARN] Route not found ${basePath}, redirecting to 404`);
             location.hash = "/404";
