@@ -320,6 +320,7 @@ const router = new Router(routes);
                     document.getElementById("emailAddress").value
                 );
                 alert("Form successfully submitted, contact has been added.");
+                router.navigate("/");
             }
         })
 
@@ -383,19 +384,19 @@ const router = new Router(routes);
         })
 
         const editButtons = document.querySelectorAll('button.edit');
-        // editButtons.forEach((button) => {
-        //     button.addEventListener("click", function() {
-        //         // location.href = "edit.html#" + this.value;
-        //         // location.href = "edit.html";
-        //         console.log(this.value)
-        //     })
-        // })
-
         editButtons.forEach((button) => {
-            button.addEventListener("click", (e) => {
-                router.navigate(`/edit#${e.target.value}`);
+            button.addEventListener("click", function() {
+                router.navigate(`/edit/${this.value}`)
+                console.log(this.value)
             })
         })
+
+        // editButtons.forEach((button) => {
+        //     button.addEventListener("click", (e) => {
+        //         router.navigate(`/edit/${e.target.value}`);
+        //
+        //     })
+        // })
 
 
         const deleteButtons = document.querySelectorAll('button.delete');

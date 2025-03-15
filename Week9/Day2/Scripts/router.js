@@ -32,7 +32,9 @@ export class Router {
     loadRoute(path) {
         console.log(`[INFO] Loading route: ${path}`);
 
-        const basePath = path.split("#")[0];
+        let basePath = path.split("#")[0];
+
+        console.log(basePath, ": base path");
 
         if (!this.routes[path]) {
             console.error(`[WARN] Route not found ${basePath}, redirecting to 404`);
