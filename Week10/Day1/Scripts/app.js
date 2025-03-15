@@ -457,7 +457,10 @@ const router = new Router(routes);
             default:
                 // edit an existing contact
                 const contact = new core.Contact();
-                const contactData = localStorage.getItem(page);
+                // parse the contact ID out of the path
+                const contactID = page.split("/")[page.split("/").length - 1];
+
+                const contactData = localStorage.getItem(contactID);
 
                 if (contactData) contact.deserialize(contactData);
 
@@ -476,23 +479,17 @@ const router = new Router(routes);
                 // attach event listeners
                 addEventListenerOnce('editButton', 'click',
                     (event) => handleEditClick(event, contact, page));
-                // cancelButton.removeEventListener("click", handleCancelClick);
-                // cancelButton.addEventListener("click", handleCancelClick);
-
 
                 // addEventListenerOnce('cancelButton', 'click', handleCancelClick())
 
-                const element = document.getElementById("cancelButton");
-                if (element) {
+                if (cancelButton) {
                     // remove any existing event listeners
-                    element.removeEventListener('click', handleCancelClick);
-
+                    cancelButton.removeEventListener('click', handleCancelClick);
                     // attach the new (latest) event for that element
-                    element.addEventListener('click', handleCancelClick);
+                    cancelButton.addEventListener('click', handleCancelClick);
                 } else {
                     console.warn(`[WARN] Element with ID "cancelButton" not found.`);
                 }
-
                 break;
         }
     }

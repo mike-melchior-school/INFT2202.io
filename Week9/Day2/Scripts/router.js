@@ -33,10 +33,14 @@ export class Router {
         console.log(`[INFO] Loading route: ${path}`);
 
         let basePath = path.split("#")[0];
+        // extract known route
+        if (basePath.includes("edit")) {
+            basePath = "/edit";
+        }
 
         console.log(basePath, ": base path");
 
-        if (!this.routes[path]) {
+        if (!this.routes[basePath]) {
             console.error(`[WARN] Route not found ${basePath}, redirecting to 404`);
             location.hash = "/404";
             path = "/404";
