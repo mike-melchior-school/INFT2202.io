@@ -449,11 +449,14 @@ const router = new Router(routes);
             }
 
             // parse the contact ID out of the path
-            const contactID = page.split("/")[page.split("/").length - 1];
+            const contactID = location.hash.split("/")[location.hash.split("/").length - 1];
             const contactData = localStorage.getItem(contactID);
 
+            console.log(`location.hash: ${location.hash}`);
+            console.log(`[CONTACT ID] ${contactID}`);
+
             if (!contactData) {
-                console.error("[ERROR] no contact data found for id")
+                console.error("[ERROR] no contact data found for id: ", contactID)
             }
             const contact = new Contact();
 
@@ -645,7 +648,7 @@ const router = new Router(routes);
     }
 
     document.addEventListener("routeLoaded", (e) => {
-        if (!(e instanceof  CustomEvent) || typeof e.detail !== 'string') {
+        if (!(e instanceof CustomEvent) || typeof e.detail !== 'string') {
             console.warn("[WARNING] Recieved an invalid 'routeLoaded event");
             return;
         }
