@@ -5,20 +5,37 @@
  * loads the header from an external local file
  * @returns {Promise<void>}
  */
-export const loadHeader = ():Promise<void> => {
+export const loadHeader = async ():Promise<void> => {
     console.log('[INFO] loadHeader Called')
 
-    return fetch('views/components/header.html')
-        .then(response => response.text())
-        .then(data => {
-            const headerElement = document.querySelector('header');
-            if (headerElement) headerElement.innerHTML = data;
-            else console.warn("No header element found");
-            updateActiveNavLink();
-            checkLogin();
-        })
-        .catch(error => console.log("[ERROR] Unable to load header"));
+    try {
+        const response = await fetch('views/components/header.html');
+        const data = await response.text();
 
+        const headerElement = document.querySelector('header');
+        if (headerElement) {
+            headerElement.innerHTML = data;
+        } else {
+            console.warn("No header element found");
+        }
+
+        updateActiveNavLink();
+        checkLogin();
+    } catch (error) {
+        console.log("[ERROR] Unable to load header", error);
+    }
+
+
+    // return fetch('views/components/header.html')
+    //     .then(response => response.text())
+    //     .then(data => {
+    //         const headerElement = document.querySelector('header');
+    //         if (headerElement) headerElement.innerHTML = data;
+    //         else console.warn("No header element found");
+    //         updateActiveNavLink();
+    //         checkLogin();
+    //     })
+    //     .catch(error => console.log("[ERROR] Unable to load header"));
 
 }
 

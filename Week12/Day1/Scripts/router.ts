@@ -1,6 +1,8 @@
 "use strict";
 
-import {loadHeader} from "./header";
+
+
+import {loadHeader} from "./header.js";
 
 type RouteMap = {[key:string]: string};
 
@@ -26,10 +28,10 @@ export class Router {
             this.loadRoute(location.hash.slice(1));
         });
 
-        window.addEventListener("popstate", () => {
-            console.log(`[INFO] Navigating to: ${location.hash.slice(1)}`)
-            this.loadRoute(location.hash.slice(1));
-        })
+        // window.addEventListener("popstate", () => {
+        //     console.log(`[INFO] Navigating to: ${location.hash.slice(1)}`)
+        //     this.loadRoute(location.hash.slice(1));
+        // })
     }
 
     navigate(path:string) {
@@ -46,9 +48,7 @@ export class Router {
             basePath = "/edit";
         }
 
-        console.log(basePath, ": base path");
-
-        if (!this.routes[path]) {
+        if (!this.routes[basePath]) {
             console.error(`[WARN] Route not found ${basePath}, redirecting to 404`);
             location.hash = "/404";
             path = "/404";
@@ -60,14 +60,15 @@ export class Router {
                 return res.text();
             })
             .then(html => {
-                const mainElement = document.createElement("main");
-                if (mainElement) mainElement.innerHTML = html;
-                else console.error("Main element not found");
-
                 loadHeader().then(() => {
-                    // Dispatch a custom event to notify that a new route have been loaded.
-                    document.dispatchEvent(new CustomEvent("routeLoaded", {detail: basePath}));
+                    document.dispatchEvent(new CustomEvent("routeLoaded", { detail: basePath }));
                 })
+
+                const mainElement = document.querySelector("main");
+                if (mainElement) {
+                    mainElement.innerHTML = html;
+                }
+                else console.error("Main element not found");
             })
             .catch(err => {
                 console.error(`[ERROR] Error loading page: ${err}`);

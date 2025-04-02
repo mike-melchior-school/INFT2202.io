@@ -371,10 +371,12 @@ const router = new Router(routes);
                 return;
             }
             // parse the contact ID out of the path
-            const contactID = page.split("/")[page.split("/").length - 1];
+            const contactID = location.hash.split("/")[location.hash.split("/").length - 1];
             const contactData = localStorage.getItem(contactID);
+            console.log(`location.hash: ${location.hash}`);
+            console.log(`[CONTACT ID] ${contactID}`);
             if (!contactData) {
-                console.error("[ERROR] no contact data found for id");
+                console.error("[ERROR] no contact data found for id: ", contactID);
             }
             const contact = new Contact();
             if (contactData)
