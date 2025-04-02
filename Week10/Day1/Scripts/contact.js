@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Contact = void 0;
 /**
  *
- * Represents a contact with a name, contact number and email address
+ * Represents a contacts with a name, contacts number and email address
  */
 var Contact = /** @class */ (function () {
     /**
@@ -22,14 +22,14 @@ var Contact = /** @class */ (function () {
     }
     Object.defineProperty(Contact.prototype, "fullName", {
         /**
-         * returns the full nama of the contact
+         * returns the full nama of the contacts
          * @returns {string}
          */
         get: function () {
             return this._fullName;
         },
         /**
-         * sets the full name of the contact after validating the data
+         * sets the full name of the contacts after validating the data
          * @param fullName
          */
         set: function (fullName) {
@@ -43,14 +43,14 @@ var Contact = /** @class */ (function () {
     });
     Object.defineProperty(Contact.prototype, "contactNumber", {
         /**
-         * returns the contact number of the contact
+         * returns the contacts number of the contacts
          * @returns {string}
          */
         get: function () {
             return this._contactNumber;
         },
         /**
-         * sets the contact number of the contact after validating the data
+         * sets the contacts number of the contacts after validating the data
          * @param contactNumber
          */
         set: function (contactNumber) {
@@ -65,14 +65,14 @@ var Contact = /** @class */ (function () {
     });
     Object.defineProperty(Contact.prototype, "emailAddress", {
         /**
-         * returns the email address of the contact
+         * returns the email address of the contacts
          * @returns {string}
          */
         get: function () {
             return this._emailAddress;
         },
         /**
-         * sets the email of the contact after validating the data
+         * sets the email of the contacts after validating the data
          * @param address
          */
         set: function (address) {
@@ -86,14 +86,14 @@ var Contact = /** @class */ (function () {
         configurable: true
     });
     /**
-     * returns a formatted string of the contact
+     * returns a formatted string of the contacts
      * @returns {string}
      */
     Contact.prototype.toString = function () {
         return "Full Name: ".concat(this._fullName, "\n\n                Contact Number: ").concat(this.contactNumber, "\n\n                Email Address: ").concat(this.emailAddress);
     };
     /**
-     * Serializes the contact details into a string (csv) format suitable for storage
+     * Serializes the contacts details into a string (csv) format suitable for storage
      * @returns {string|null}
      */
     Contact.prototype.serialize = function () {
@@ -104,7 +104,7 @@ var Contact = /** @class */ (function () {
         return "".concat(this._fullName, ",").concat(this._contactNumber, ",").concat(this._emailAddress);
     };
     /**
-     * Deserializes a csv string of contact details and updates the contact properties
+     * Deserializes a csv string of contacts details and updates the contacts properties
      * @param data
      * @returns {null}
      */

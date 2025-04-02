@@ -79,7 +79,7 @@
     }
 
     const displayContactsListPage = () => {
-        console.log("displaying contact list page");
+        console.log("displaying contacts list page");
 
         if (localStorage.length > 0) {
             let contactList = document.getElementById("contactList");
@@ -139,17 +139,17 @@
         const deleteButtons = document.querySelectorAll('button.delete');
         deleteButtons.forEach(button => {
             button.addEventListener("click", function()  {
-                if (confirm("Delete contact?")) {
+                if (confirm("Delete contacts?")) {
                     localStorage.removeItem(this.value);
-                    location.href = "contact-list.html";
+                    location.href = "contacts-list.html";
                 }
             })
         })
         // deleteButtons.forEach(button => {
         //     button.addEventListener("click", (e) => {
-        //         if (confirm("Delete contact?")) {
+        //         if (confirm("Delete contacts?")) {
         //             localStorage.removeItem(e.currentTarget.value);
-        //             location.href = "contact-list.html";
+        //             location.href = "contacts-list.html";
         //         }
         //     })
         // })
@@ -160,7 +160,7 @@
     }
 
     const displayEditContactPage = () => {
-        console.log("displaying edit contact page");
+        console.log("displaying edit contacts page");
 
         const page = location.hash.substring(1);
         const editButton = document.getElementById("editButton");
@@ -168,7 +168,7 @@
 
         switch (page) {
             case "add":
-                // add new contact
+                // add new contacts
                 const heading = document.querySelector('main>h1');
 
                 document.title = "Add Contact";
@@ -182,23 +182,23 @@
                         document.getElementById("contactNumber").value,
                         document.getElementById("email").value,
                     )
-                    location.href = "contact-list.html";
+                    location.href = "contacts-list.html";
                 })
 
                 if (cancelButton) {
                     cancelButton.addEventListener("click", (e) => {
-                        location.href = "contact-list.html";
+                        location.href = "contacts-list.html";
                     })
                 }
                 break;
             default:
-                // edit an existing contact
+                // edit an existing contacts
                 const contact = new core.Contact();
                 const contactData = localStorage.getItem(page);
 
                 if (contactData) contact.deserialize(contactData);
 
-                // Prepopulate contact data into form
+                // Prepopulate contacts data into form
                 document.getElementById("fullName").value = contact.fullName;
                 document.getElementById("contactNumber").value = contact.contactNumber;
                 document.getElementById("email").value = contact.emailAddress;
@@ -213,13 +213,13 @@
 
                         // update/overwrite
                         localStorage.setItem(page, contact.serialize());
-                        location.href = "contact-list.html";
+                        location.href = "contacts-list.html";
                     })
                 }
 
                 if (cancelButton) {
                     cancelButton.addEventListener("click", (e) => {
-                        location.href = "contact-list.html";
+                        location.href = "contacts-list.html";
                     })
                 }
 

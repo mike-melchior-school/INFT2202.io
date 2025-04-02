@@ -9,10 +9,10 @@ const routes = {
     "/": "views/pages/home.html",
     // "home": "views/pages/home.html",
     "/about": "views/pages/about.html",
-    "/contact": "views/pages/contact.html",
+    "/contact": "views/pages/contacts.html",
     "/products": "views/pages/products.html",
     "/services": "views/pages/services.html",
-    "/contact-list": "views/pages/contact-list.html",
+    "/contact-list": "views/pages/contacts-list.html",
     "/edit": "views/pages/edit.html",
     "/login": "views/pages/login.html",
     "/404": "views/pages/404.html",
@@ -61,16 +61,16 @@ const router = new Router(routes);
     }
 
     /**
-     * redirect the user back to the contact list page
+     * redirect the user back to the contacts list page
      * @returns {string}
      */
-    const handleCancelClick = () => location.href = "contact-list.html";
+    const handleCancelClick = () => location.href = "contacts-list.html";
 
     /**
-     * handles the process of editing an existing contact
+     * handles the process of editing an existing contacts
      * @param event
-     * @param contact contact to update
-     * @param page unique contact identifier
+     * @param contact contacts to update
+     * @param page unique contacts identifier
      */
     const handleEditClick = (event, contact, page) => {
         // prevent default form submission
@@ -85,19 +85,19 @@ const router = new Router(routes);
         const contactNumber = document.getElementById('contactNumber').value;
         const emailAddress = document.getElementById('emailAddress').value;
 
-        // update the contact object with the new values
+        // update the contacts object with the new values
         contact.fullName = fullName;
         contact.emailAddress = emailAddress;
         contact.contactNumber = contactNumber;
 
 
-        localStorage.setItem(page, contact.serialize()); // save the updated contact in local storage
-        location.href = "contact-list.html";
+        localStorage.setItem(page, contact.serialize()); // save the updated contacts in local storage
+        location.href = "contacts-list.html";
 
     }
 
     /**
-     * handles the process of adding a new contact
+     * handles the process of adding a new contacts
      * @param event the event object to prevent default form submission
      */
     const handleAddClick = (event) => {
@@ -116,7 +116,7 @@ const router = new Router(routes);
         AddContact(fullName, emailAddress, contactNumber);
 
         //redirection
-        location.href = "contact-list.html";
+        location.href = "contacts-list.html";
     }
 
     /**
@@ -243,7 +243,7 @@ const router = new Router(routes);
         }
 
         // redirection
-        location.href = "contact-list.html";
+        location.href = "contacts-list.html";
     }
 
     const displayWeather = async () => {
@@ -312,13 +312,13 @@ const router = new Router(routes);
                     document.getElementById("contactNumber").value,
                     document.getElementById("emailAddress").value
                 );
-                alert("Form successfully submitted, contact has been added.");
+                alert("Form successfully submitted, contacts has been added.");
             }
         })
     }
 
     const displayContactsListPage = () => {
-        console.log("displaying contact list page");
+        console.log("displaying contacts list page");
 
         if (localStorage.length > 0) {
             let contactList = document.getElementById("contactList");
@@ -386,17 +386,17 @@ const router = new Router(routes);
         const deleteButtons = document.querySelectorAll('button.delete');
         deleteButtons.forEach(button => {
             button.addEventListener("click", function()  {
-                if (confirm("Delete contact?")) {
+                if (confirm("Delete contacts?")) {
                     localStorage.removeItem(this.value);
-                    location.href = "contact-list.html";
+                    location.href = "contacts-list.html";
                 }
             })
         })
         // deleteButtons.forEach(button => {
         //     button.addEventListener("click", (e) => {
-        //         if (confirm("Delete contact?")) {
+        //         if (confirm("Delete contacts?")) {
         //             localStorage.removeItem(e.currentTarget.value);
-        //             location.href = "contact-list.html";
+        //             location.href = "contacts-list.html";
         //         }
         //     })
         // })
@@ -407,7 +407,7 @@ const router = new Router(routes);
     }
 
     const displayEditContactPage = () => {
-        console.log("displaying edit contact page");
+        console.log("displaying edit contacts page");
 
         const page = location.hash.substring(1);
         const editButton = document.getElementById("editButton");
@@ -430,13 +430,13 @@ const router = new Router(routes);
 
                 break;
             default:
-                // edit an existing contact
+                // edit an existing contacts
                 const contact = new core.Contact();
                 const contactData = localStorage.getItem(page);
 
                 if (contactData) contact.deserialize(contactData);
 
-                // Prepopulate contact data into form
+                // Prepopulate contacts data into form
                 document.getElementById("fullName").value = contact.fullName;
                 document.getElementById("contactNumber").value = contact.contactNumber;
                 document.getElementById("emailAddress").value = contact.emailAddress;

@@ -12,10 +12,10 @@ const routes: Record<string, string> = {
     "/": "views/pages/home.html",
     "home": "views/pages/home.html",
     "/about": "views/pages/about.html",
-    "/contact": "views/pages/contact.html",
+    "/contact": "views/pages/contacts.html",
     "/products": "views/pages/products.html",
     "/services": "views/pages/services.html",
-    "/contact-list": "views/pages/contact-list.html",
+    "/contact-list": "views/pages/contacts-list.html",
     "/edit": "views/pages/edit.html",
     "/login": "views/pages/login.html",
     "/404": "views/pages/404.html",
@@ -42,16 +42,16 @@ const router = new Router(routes);
 
 
     /**
-     * redirect the user back to the contact list page
+     * redirect the user back to the contacts list page
      * @returns {string}
      */
     const handleCancelClick = (): void => router.navigate("/contact-list");
 
     /**
-     * handles the process of editing an existing contact
+     * handles the process of editing an existing contacts
      * @param event
-     * @param contact contact to update
-     * @param page unique contact identifier
+     * @param contact contacts to update
+     * @param page unique contacts identifier
      */
     const handleEditClick = (event: Event, contact: Contact, page: string) => {
         // prevent default form submission
@@ -66,18 +66,18 @@ const router = new Router(routes);
         const contactNumber = (document.getElementById('contactNumber') as HTMLInputElement).value;
         const emailAddress = (document.getElementById('emailAddress') as HTMLInputElement).value;
 
-        // update the contact object with the new values
+        // update the contacts object with the new values
         contact.fullName = fullName;
         contact.emailAddress = emailAddress;
         contact.contactNumber = contactNumber;
 
 
-        localStorage.setItem(page, (contact.serialize() as string)); // save the updated contact in local storage
+        localStorage.setItem(page, (contact.serialize() as string)); // save the updated contacts in local storage
         router.navigate("/contact-list");
     }
 
     /**
-     * handles the process of adding a new contact
+     * handles the process of adding a new contacts
      * @param event the event object to prevent default form submission
      */
     const handleAddClick = (event: Event) => {
@@ -300,7 +300,7 @@ const router = new Router(routes);
                     (document.getElementById("contactNumber") as HTMLInputElement).value,
                     (document.getElementById("emailAddress") as HTMLInputElement).value
                 );
-                alert("Form successfully submitted, contact has been added.");
+                alert("Form successfully submitted, contacts has been added.");
                 router.navigate("/");
             }
         })
@@ -314,7 +314,7 @@ const router = new Router(routes);
     }
 
     const displayContactsListPage = () => {
-        console.log("displaying contact list page");
+        console.log("displaying contacts list page");
 
         let contactList = document.getElementById("contactList");
 
@@ -398,11 +398,11 @@ const router = new Router(routes);
                 console.log(`[DEBUG] Deleting contact with Contact ID: ${contactKey}`);
 
                 if (!contactKey.startsWith("contact_")) {
-                    console.error("[ERROR] Invalid contact key format");
+                    console.error("[ERROR] Invalid contacts key format");
                     return;
                 }
 
-                if (confirm("Delete contact?")) {
+                if (confirm("Delete contacts?")) {
                     localStorage.removeItem(this.value);
                     displayContactsListPage();
                 }
@@ -415,7 +415,7 @@ const router = new Router(routes);
     }
 
     const displayEditContactPage = () => {
-        console.log("displaying edit contact page");
+        console.log("displaying edit contacts page");
 
         const hashParts = location.hash.split('#');
         const page: string = hashParts.length > 2 ? hashParts[2] : "";
@@ -448,12 +448,12 @@ const router = new Router(routes);
                 return;
             }
 
-            // parse the contact ID out of the path
+            // parse the contacts ID out of the path
             const contactID = page.split("/")[page.split("/").length - 1];
             const contactData = localStorage.getItem(contactID);
 
             if (!contactData) {
-                console.error("[ERROR] no contact data found for id")
+                console.error("[ERROR] no contacts data found for id")
             }
             const contact = new Contact();
 

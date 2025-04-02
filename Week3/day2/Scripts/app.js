@@ -59,7 +59,7 @@
     }
 
     const displayContactsListPage = () => {
-        console.log("displaying contact list page");
+        console.log("displaying contacts list page");
 
         if (localStorage.length > 0) {
             let contactList = document.getElementById("contactList");

@@ -1,16 +1,25 @@
 {
-  "name": "INFT2202",
+  "name": "inft2202",
   "version": "1.0.0",
-  "description": "",
-  "main": "Scripts/app.ts",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "node dist/server/server.js",
+    "dev": "tsc && node dist/server/server.js",
+    "clean": "rimraf dist",
+    "clean-build": "npm run clean && npm run build",
+    "watch": "tsc --watch",
+    "start:dev": "nodemon dist/server/server.js"
   },
+  "description": "",
+  "main": "src/client/app.ts",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
-    "lite-server": "^2.6.1"
+    "express": "^4.21.2",
+    "lite-server": "^2.6.1",
+    "typescript": "^5.8.2"
   }
 }

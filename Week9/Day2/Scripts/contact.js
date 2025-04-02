@@ -5,7 +5,7 @@
 (function (core) {
     /**
      *
-     * Represents a contact with a name, contact number and email address
+     * Represents a contacts with a name, contacts number and email address
      */
     class Contact {
 
@@ -22,7 +22,7 @@
         }
 
         /**
-         * returns the full nama of the contact
+         * returns the full nama of the contacts
          * @returns {string}
          */
         get fullName() {
@@ -30,7 +30,7 @@
         }
 
         /**
-         * sets the full name of the contact after validating the data
+         * sets the full name of the contacts after validating the data
          * @param fullName
          */
         set fullName(fullName) {
@@ -41,7 +41,7 @@
         }
 
         /**
-         * returns the contact number of the contact
+         * returns the contacts number of the contacts
          * @returns {string}
          */
         get contactNumber() {
@@ -49,7 +49,7 @@
         }
 
         /**
-         * sets the contact number of the contact after validating the data
+         * sets the contacts number of the contacts after validating the data
          * @param contactNumber
          */
         set contactNumber(contactNumber) {
@@ -61,7 +61,7 @@
         }
 
         /**
-         * returns the email address of the contact
+         * returns the email address of the contacts
          * @returns {string}
          */
         get emailAddress() {
@@ -69,7 +69,7 @@
         }
 
         /**
-         * sets the email of the contact after validating the data
+         * sets the email of the contacts after validating the data
          * @param address
          */
         set emailAddress(address) {
@@ -81,7 +81,7 @@
         }
 
         /**
-         * returns a formatted string of the contact
+         * returns a formatted string of the contacts
          * @returns {string}
          */
         toString = () => {
@@ -91,7 +91,7 @@
         }
 
         /**
-         * Serializes the contact details into a string (csv) format suitable for storage
+         * Serializes the contacts details into a string (csv) format suitable for storage
          * @returns {string|null}
          */
         serialize = () => {
@@ -103,7 +103,7 @@
         }
 
         /**
-         * Deserializes a csv string of contact details and updates the contact properties
+         * Deserializes a csv string of contacts details and updates the contacts properties
          * @param data
          * @returns {null}
          */
