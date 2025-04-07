@@ -1,5 +1,6 @@
 import {Contact} from "./contact.js";
 import {Router} from "./router.js";
+import {createContact, updateContact} from "./api/index.js";
 
 
 /**
@@ -144,12 +145,10 @@ export const handleCancelClick = (router: Router): void => router.navigate("/con
 /**
  * handles the process of editing an existing contacts
  * @param event
- * @param contact contacts to update
- * @param page unique contacts identifier
+ * @param contactID
  * @param router
  */
-export const handleEditClick = (event: Event, contact: Contact, page: string, router: Router) => {
-    // prevent default form submission
+export const handleEditClick = async (event: Event, contactID: string, router: Router): Promise<void> => {
     event.preventDefault();
 
     if (!validateForm()) {
@@ -161,16 +160,15 @@ export const handleEditClick = (event: Event, contact: Contact, page: string, ro
     const contactNumber = (document.getElementById('contactNumber') as HTMLInputElement).value;
     const emailAddress = (document.getElementById('emailAddress') as HTMLInputElement).value;
 
-    // update the contacts object with the new values
-    contact.fullName = fullName;
-    contact.emailAddress = emailAddress;
-    contact.contactNumber = contactNumber;
-
-    saveToStorage(page, contact);
-    router.navigate("/contact-list");
+    try {
+        await updateContact(contactID, {fullName, contactNumber, emailAddress});
+        router.navigate("/contact-list");
+    } catch (e) {
+        console.error(`[ERROR] failed to update contact: ${e}`);
+    }
 }
 
-export const AddContact = (fullName: string, contactNumber: string, emailAddress: string, router: Router) => {
+export const AddContact = async (fullName: string, contactNumber: string, emailAddress: string, router: Router) => {
     console.log("[DEBUG] AddContact() triggered.");
 
     if (!validateForm()) {
@@ -178,12 +176,13 @@ export const AddContact = (fullName: string, contactNumber: string, emailAddress
         return;
     }
 
-    let contact: Contact = new Contact(fullName, contactNumber, emailAddress);
-    let key =  `contact_${Date.now()}`;
-
-    saveToStorage(key, contact);
-
-    router.navigate("/contact-list");
+    try {
+        const newContact = { fullName, contactNumber, emailAddress };
+        await createContact(newContact);
+        router.navigate("/contact-list");
+    } catch (e) {
+        console.error("[ERROR] Error adding contact", e);
+    }
 }
 
 export const removeFromStorage = (key: string): void => {

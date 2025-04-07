@@ -4,7 +4,8 @@ import { loadHeader } from "./header.js";
 import { Router } from "./router.js";
 import { loadFooter } from "./footer.js";
 import { authGuard } from "./authguard.js";
-import { handleCancelClick, handleEditClick, AddContact, addEventListenerOnce, validateForm, attachValidationListeners, displayWeather, getFromStorage, removeFromStorage } from "./utils.js";
+import { handleEditClick, AddContact, addEventListenerOnce, validateForm, attachValidationListeners, displayWeather } from "./utils.js";
+import { deleteContact, fetchContact, fetchContacts } from "./api/index.js";
 const routes = {
     "/": "views/pages/home.html",
     "/home": "views/pages/home.html",
@@ -95,129 +96,125 @@ const router = new Router(routes);
             });
         }
     };
-    const displayContactsListPage = () => {
+    const displayContactsListPage = async () => {
         console.log("displaying contacts list page");
         let contactList = document.getElementById("contactList");
         if (!contactList) {
             console.error("[ERROR] Unable to locate element with ID contactList");
             return;
         }
-        let data = "";
-        let keys = Object.keys(localStorage);
-        let index = 1;
-        if (localStorage.length > 0) {
-            keys.forEach((key) => {
-                if (key.startsWith("contact_")) {
-                    const contact = getFromStorage(key);
-                    if (!contact) {
-                        console.error(`[ERROR] No data found for key: ${key}`);
-                        return;
-                    }
-                    data += `<tr>
-                                <th scope="row" class="text-center">${index}</th>
-                                <td>${contact.fullName}</td>
-                                <td>${contact.contactNumber}</td>
-                                <td>${contact.emailAddress}</td>
-                                
-                                <td class="text-center">
-                                    <button value="${key}" class="btn btn-warning btn-sm edit">
-                                        <i class="fa-solid fa-user-pen"></i> Edit
-                                    </button>
-                                </td>
-                                <td class="text-center">
-                                    <button value="${key}" class="btn btn-danger btn-sm delete">
-                                        <i class="fa-solid fa-trash"></i> Delete
-                                    </button>
-                                </td>
-                             </tr>`;
-                    index++;
-                }
-                else {
-                    console.warn(`[WARN] Skipping non-contact key: ${key}`);
-                }
+        try {
+            const contacts = await fetchContacts();
+            let data = "";
+            let index = 1;
+            contacts.forEach((contact) => {
+                data +=
+                    `<tr>
+                        <th scope="row" class="text-center">${index}</th>
+                        <td>${contact.fullName}</td>
+                        <td>${contact.contactNumber}</td>
+                        <td>${contact.emailAddress}</td>
+                        
+                        <td class="text-center">
+                            <button value="${contact.id}" class="btn btn-warning btn-sm edit">
+                                <i class="fa-solid fa-user-pen"></i> Edit
+                            </button>
+                        </td>
+                        <td class="text-center">
+                            <button value="${contact.id}" class="btn btn-danger btn-sm delete">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>`;
+                index++;
             });
             contactList.innerHTML = data;
+            const addButton = document.getElementById("addButton");
+            addButton?.addEventListener("click", () => {
+                router.navigate("/edit#add");
+            });
+            document.querySelectorAll('button.edit').forEach((button) => {
+                button.addEventListener("click", function (e) {
+                    const targetButton = e.target;
+                    const contactKey = targetButton.value;
+                    router.navigate(`/edit/${contactKey}`);
+                });
+            });
+            document.querySelectorAll('button.delete').forEach(button => {
+                button.addEventListener("click", async function (e) {
+                    const targetButton = e.target;
+                    const contactKey = targetButton.value;
+                    if (confirm("Delete contacts?")) {
+                        try {
+                            await deleteContact(contactKey);
+                            await displayContactsListPage();
+                        }
+                        catch (e) {
+                            console.error(`[ERROR] failed to delete contact: ${e}`);
+                        }
+                    }
+                });
+            });
         }
-        const addButton = document.getElementById("addButton");
-        addButton?.addEventListener("click", () => {
-            router.navigate("/edit#add");
-        });
-        const editButtons = document.querySelectorAll('button.edit');
-        editButtons.forEach((button) => {
-            button.addEventListener("click", function (e) {
-                const targetButton = e.target;
-                const contactKey = targetButton.value;
-                router.navigate(`/edit/${contactKey}`);
-            });
-        });
-        const deleteButtons = document.querySelectorAll('button.delete');
-        deleteButtons.forEach(button => {
-            button.addEventListener("click", function (e) {
-                const targetButton = e.target;
-                const contactKey = targetButton.value;
-                console.log(`[DEBUG] Deleting contact with Contact ID: ${contactKey}`);
-                if (confirm("Delete contacts?")) {
-                    removeFromStorage(contactKey);
-                    displayContactsListPage();
-                }
-            });
-        });
+        catch (e) {
+            console.error(`[ERROR] Failed to display contacts: ${e}`);
+        }
     };
     const displayAboutPage = () => {
         console.log("displaying about page");
     };
-    const displayEditContactPage = () => {
+    const displayEditContactPage = async () => {
         console.log("displaying edit contacts page");
         const hashParts = location.hash.split('#');
         const page = hashParts.length > 2 ? hashParts[2] : "";
         const editButton = document.getElementById("editButton");
         const pageTitle = document.querySelector("main > h1");
         const cancelButton = document.getElementById("cancelButton");
-        if (!pageTitle) {
+        if (!pageTitle || !cancelButton || !editButton) {
             console.error("[ERROR] main page title element not found");
             return;
         }
         if (page === "add") {
             document.title = "Add Contact";
             pageTitle.textContent = "Add Contact";
-            if (editButton) {
-                editButton.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Contact`;
-                editButton.classList.remove("btn-primary");
-                editButton.classList.add("btn-success");
-            }
-            addEventListenerOnce('editButton', 'click', handleAddClick);
-            addEventListenerOnce('cancelButton', 'click', (event) => handleCancelClick(router));
+            editButton.innerHTML = `<i class="fa-solid fa-user-plus"></i> Add Contact`;
+            editButton.classList.remove("btn-primary");
+            editButton.classList.add("btn-success");
         }
         else {
-            if (!pageTitle) {
-                console.error("[ERROR] main page title element not found");
+            editButton.innerHTML = `<i class="fa fa-edit fa-lg"></i> Edit Contact`;
+            editButton.classList.remove("btn-success");
+            editButton.classList.add("btn-primary");
+            try {
+                document.title = "Add Contact";
+                pageTitle.textContent = "Add Contact";
+                const contact = await fetchContact(page);
+                document.getElementById("fullName").value = contact.fullName;
+                document.getElementById("contactNumber").value = contact.contactNumber;
+                document.getElementById("emailAddress").value = contact.emailAddress;
+            }
+            catch (e) {
+                console.error(`[ERROR] Failed to fetch contact: ${e}`);
+                router.navigate("/contact-list");
                 return;
             }
-            const contact = getFromStorage(page);
-            if (!contact) {
-                console.error("[ERROR] no contacts data found for id");
-                return;
-            }
-            document.getElementById("fullName").value = contact.fullName;
-            document.getElementById("contactNumber").value = contact.contactNumber;
-            document.getElementById("emailAddress").value = contact.emailAddress;
-            if (editButton) {
-                editButton.innerHTML = `<i class="fa fa-edit fa-lg"></i> Edit Contact`;
-                editButton.classList.remove("btn-success");
-                editButton.classList.add("btn-primary");
-            }
-            // attach event listeners
-            addEventListenerOnce('editButton', 'click', (event) => handleEditClick(event, contact, page, router));
-            // addEventListenerOnce('cancelButton', 'click', handleCancelClick())
-            if (cancelButton) {
-                // remove any existing event listeners
-                cancelButton.removeEventListener('click', (event) => handleCancelClick(router));
-                // attach the new (latest) event for that element
-                cancelButton.addEventListener('click', (event) => handleCancelClick(router));
-            }
-            else {
-                console.warn(`[WARN] Element with ID "cancelButton" not found.`);
-            }
+            addEventListenerOnce('editButton', 'click', async (event) => {
+                event.preventDefault();
+                if (page === "add") {
+                    const fullName = document.getElementById("fullName").value.trim();
+                    const contactNumber = document.getElementById("contactNumber").value.trim();
+                    const emailAddress = document.getElementById("emailAddress").value.trim();
+                    await AddContact(fullName, contactNumber, emailAddress, router);
+                }
+                else {
+                    await handleEditClick(event, page, router);
+                }
+            });
+            addEventListenerOnce('cancelButton', 'click', (e) => {
+                e.preventDefault();
+                router.navigate("/contact-list");
+            });
+            attachValidationListeners();
         }
     };
     const displayLoginPage = () => {

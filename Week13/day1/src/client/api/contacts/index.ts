@@ -3,7 +3,7 @@
 import { Contact } from "../../contact.js"
 
 interface ContactData {
-    id: string;
+    //id: string;
     fullName: string;
     contactNumber: string;
     emailAddress: string;
@@ -15,7 +15,7 @@ export async function fetchContacts(): Promise<Contact[]> {
     return response.json();
 }
 
-export async function fetchContact(id: string): Promise<Contact[]> {
+export async function fetchContact(id: string): Promise<Contact> {
     const response = await fetch(`/api/contacts/${id}`)
     if (!response.ok) throw new Error(`Failed to fetch contacts: ${response.statusText}`);
     return response.json();
