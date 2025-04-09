@@ -1,71 +1,82 @@
 "use strict";
 import express from "express";
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
+import Database from "./database.js";
 const router = express.Router();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const CONTACT_FILE = path.join(__dirname, "../../data/contacts.json");
-const readContacts = async () => {
-    try {
-        const data = await fs.readFile(CONTACT_FILE, "utf8");
-        return JSON.parse(data);
-    }
-    catch (e) {
-        // ENOENT -- Error Not No Entry "File Not Found"
-        if (e.code === "ENOENT") {
-            return [];
-        }
-        throw e;
-    }
-};
-const writeContacts = async (contacts) => {
-    await fs.writeFile(CONTACT_FILE, JSON.stringify(contacts, null, 2), "utf8");
-};
 router.get('/', async (req, res) => {
-    const data = await readContacts();
-    res.json(data);
-});
-router.get('/:id', async (req, res) => {
-    const contacts = await readContacts();
-    const contact = contacts.find(c => c.id === req.params.id);
-    if (contact)
-        res.json(contact);
-    else
-        res.status(404).json({ message: "Contact Not Found" });
-});
-router.post('/', async (req, res) => {
-    const contacts = await readContacts();
-    const newID = contacts.length > 0
-        ? (Math.max(...contacts.map(c => parseInt(c.id))) + 1).toString()
-        : "1";
-    const newContact = { id: newID, ...req.body };
-    contacts.push(newContact);
-    await writeContacts(contacts);
-    res.status(201).json(newContact);
-});
-router.put("/:id", async (req, res) => {
-    const contacts = await readContacts();
-    const index = contacts.findIndex(c => c.id === req.params.id);
-    if (index !== -1) {
-        contacts[index] = { id: req.params.id, ...req.body };
-        await writeContacts(contacts);
+    try {
+        const db = await Database.getInstance().connect();
+        const contacts = db.collection("contacts").find().toArray();
         res.json(contacts);
     }
-    else {
-        res.status(404).json({ message: "Contact Not Found" });
+    catch (e) {
+        console.error(`[ERROR] Failed to fetch contacts: ${e}`);
+        res.status(500).json({ message: "Failed to connect to Server" });
+    }
+});
+router.get('/:id', async (req, res) => {
+    try {
+        const db = await Database.getInstance().connect();
+        const contact = await db.collection("contacts").findOne({ id: req.params.id });
+        if (contact)
+            res.json(contact);
+        else
+            res.status(404).json({ message: "Contact Not Found" });
+    }
+    catch (e) {
+        console.error(`[ERROR] Failed to fetch contact: ${e}`);
+        res.status(500).json({ message: "Failed to connect to Server" });
+    }
+});
+router.post('/', async (req, res) => {
+    try {
+        const db = await Database.getInstance().connect();
+        const contacts = await db.collection("contacts").find().toArray();
+        const newID = contacts.length > 0
+            ? (Math.max(...contacts.map(c => parseInt(c.id))) + 1).toString()
+            : "1";
+        const newContact = { id: newID, ...req.body };
+        await db.collection("contacts").insertOne(newContact);
+        // use code 201 when adding a new record to the db
+        res.status(201).json(newContact);
+    }
+    catch (e) {
+        console.error(`[ERROR] Failed to insert contact: ${e}`);
+        res.status(500).json({ message: "Failed to connect to Server" });
+    }
+});
+router.put("/:id", async (req, res) => {
+    try {
+        const db = await Database.getInstance().connect();
+        const { ...updatedData } = req.body;
+        const result = await db.collection("contacts")
+            .findOneAndUpdate({ id: req.params.id }, { $set: updatedData }, { returnDocument: 'after' });
+        if (result && result.value)
+            res.json(result.value);
+        else {
+            const updatedContact = await db.collection("contacts").findOne({ id: req.params.id });
+            if (updatedContact)
+                res.json(updatedContact);
+            else
+                res.status(404).json({ message: `Contact Not Found` });
+        }
+    }
+    catch (e) {
+        console.error(`[ERROR] Failed to update contact: ${e}`);
+        res.status(500).json({ message: "Failed to connect to Server" });
     }
 });
 router.delete("/:id", async (req, res) => {
-    const contacts = await readContacts();
-    const filterContacts = contacts.filter(c => c.id !== req.params.id);
-    if (contacts.length > filterContacts.length) {
-        await writeContacts(filterContacts);
-        res.json({ message: "Contacts Deleted" });
+    try {
+        const db = await Database.getInstance().connect();
+        const result = await db.collection("contacts").deleteOne({ id: req.params.id });
+        if (result.deletedCount > 0)
+            res.json({ message: "Contact Deleted" });
+        else
+            res.status(404).json({ message: "Contact Not Found" });
     }
-    else {
-        res.status(404).json({ message: "Contact Not Found" });
+    catch (e) {
+        console.error(`[ERROR] Failed to delete contact: ${e}`);
+        res.status(500).json({ message: "Failed to connect to Server" });
     }
 });
 export default router;

@@ -9,6 +9,17 @@ const __dirname = path.dirname(__filename);
 // Initialize express
 const app = express();
 const port = process.env.PORT || 3000;
+const startServer = async () => {
+    try {
+        app.listen(port, () => {
+            console.log(`[INFO] App running on port: http://localhost:${port}`);
+        });
+    }
+    catch (e) {
+        console.error(`[ERROR] Failed to start node server: ${e}`);
+        process.exit(1);
+    }
+};
 // Middleware to parse incoming json payloads
 app.use(express.json());
 // Serve static files (HTML, CSS, etc...) from the project root
@@ -42,7 +53,5 @@ app.get("/users", (req, res) => {
 // Start the server
 // FIXED - SERGIO
 // NEEDS TO String Literal Escaping (ie single quotes)
-app.listen(port, () => {
-    console.log(`[INFO] App running on port: http://localhost:${port}`);
-});
+await startServer();
 //# sourceMappingURL=server.js.map

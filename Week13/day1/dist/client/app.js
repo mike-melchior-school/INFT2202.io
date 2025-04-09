@@ -248,10 +248,9 @@ const router = new Router(routes);
             const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value.trim();
             try {
-                const response = await fetch('http://localhost:3000/users');
-                if (!response.ok) {
+                const response = await fetch('/users');
+                if (!response.ok)
                     throw new Error(`[ERROR] HTTP error: Status: ${response.status}`);
-                }
                 const jsonData = await response.json();
                 const users = jsonData.users;
                 let authenticatedUser = users.find((u) => u.Username === username && u.Password === password);

@@ -7,14 +7,12 @@ import {loadFooter} from "./footer.js";
 import {authGuard} from "./authguard.js";
 import {Contact} from "./contact.js";
 import {
-    validateInput,
-    handleCancelClick,
     handleEditClick,
     AddContact,
     addEventListenerOnce,
     validateForm,
     attachValidationListeners,
-    displayWeather, getFromStorage, removeFromStorage
+    displayWeather
 } from "./utils.js";
 import {deleteContact, fetchContact, fetchContacts} from "./api/index.js";
 
@@ -312,10 +310,8 @@ const router = new Router(routes);
             const password = (document.getElementById("password") as HTMLInputElement).value.trim();
 
             try {
-                const response = await fetch('http://localhost:3000/users');
-                if (!response.ok) {
-                    throw new Error(`[ERROR] HTTP error: Status: ${response.status}`);
-                }
+                const response = await fetch('/users');
+                if (!response.ok) throw new Error(`[ERROR] HTTP error: Status: ${response.status}`);
 
                 const jsonData = await response.json();
                 const users = jsonData.users;
